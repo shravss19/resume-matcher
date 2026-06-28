@@ -1,17 +1,19 @@
 import { useState } from "react";
 import axios from "axios";
 import "./App.css";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 function App() {
   const [resume, setResume] = useState(null);
   const [jobDescription, setJobDescription] = useState("");
-  const [result, setResult] = useState("");
   const [score, setScore] = useState(null);
   const [matchingSkills, setMatchingSkills] = useState([]);
   const [missingSkills, setMissingSkills] = useState([]);
+
   const uploadResume = async () => {
     if (!resume) {
-      alert("Please select a resume");
+      alert("Please select a resume.");
       return;
     }
 
@@ -25,7 +27,6 @@ function App() {
         formData
       );
 
-      setResult(response.data.text);
       setScore(response.data.score);
       setMatchingSkills(response.data.matching_skills);
       setMissingSkills(response.data.missing_skills);
@@ -37,76 +38,156 @@ function App() {
 
   return (
     <div className="container">
-      <h1 className="title">
-🚀 AI Resume Matcher & ATS Analyzer
-</h1>
+
+      <div className="hero">
+        <h1>AI Resume Matcher & ATS Analyzer</h1>
+        <p>
+          Analyze your resume against a job description and improve your ATS
+          compatibility score.
+        </p>
+      </div>
 
       <div className="card">
+
         <h2>Upload Resume</h2>
 
         <input
           type="file"
           onChange={(e) => setResume(e.target.files[0])}
         />
-      </div>
 
-      <div className="card">
-        <h2>Job Description</h2>
+        <h2 className="job-title">Job Description</h2>
 
         <textarea
           rows="8"
+          placeholder="Paste the job description here..."
           value={jobDescription}
           onChange={(e) => setJobDescription(e.target.value)}
-          placeholder="Paste job description..."
         />
+
+        <button className="btn" onClick={uploadResume}>
+          ✨ Analyze Resume
+        </button>
+
       </div>
 
-      <button className="btn" onClick={uploadResume}>
-        Analyze Resume
-      </button>
+      {score !== null && (
 
-      {result && (
         <div className="card">
-          <h2>Extracted Resume Text</h2>
-          <pre>{result}</pre>
-        </div>
-      )}
-      
 
-{score !== null && (
-  <div className="card">
-    <h2>ATS Score</h2>
+          <h2 className="center">ATS Match Score</h2>
 
-<div className="score">
-    {score}%
-</div>
+          <div className="score-circle">
 
-<div className="progress">
-    <div
-        className="progress-bar"
-        style={{ width: `${score}%` }}
-    ></div>
-</div>
+  <div className="circle">
 
-    <h3>Matching Skills</h3>
-    <div className="skills">
-{matchingSkills.map((skill,index)=>(
-<div className="skill-match" key={index}>
-✅ {skill}
-</div>
-))}
-</div>
+    <CircularProgressbar
+      value={score}
+      text={`${score}%`}
+      styles={buildStyles({
+        textColor: "#2563eb",
+        pathColor: "#2563eb",
+        trailColor: "#e5e7eb",
+        textSize: "18px"
+      })}
+    />
 
-    <h3>Missing Skills</h3>
-    <div className="skills">
-{missingSkills.map((skill,index)=>(
-<div className="skill-missing" key={index}>
-❌ {skill}
-</div>
-))}
-</div>
   </div>
-)}
+
+  <h3 className="score-text">
+    {score >= 80
+      ? "Excellent Match"
+      : score >= 60
+      ? "Good Match"
+      : score >= 40
+      ? "Fair Match"
+      : "Low Match"}
+  </h3>
+
+</div>
+
+          <div className="stats">
+
+            <div className="stat-card">
+              <h3>{score}%</h3>
+              <p>ATS Score</p>
+            </div>
+
+            <div className="stat-card">
+              <h3>{matchingSkills.length}</h3>
+              <p>Matched Skills</p>
+            </div>
+
+            <div className="stat-card">
+              <h3>{missingSkills.length}</h3>
+              <p>Missing Skills</p>
+            </div>
+
+          </div>
+
+          <div className="section">
+
+            <h3>✅ Matching Skills</h3>
+
+            <div className="skills">
+
+              {matchingSkills.length > 0 ? (
+                matchingSkills.map((skill, index) => (
+                  <div className="skill-match" key={index}>
+                    {skill}
+                  </div>
+                ))
+              ) : (
+                <p>No matching skills found.</p>
+              )}
+
+            </div>
+
+          </div>
+
+          <div className="section">
+
+            <h3>❌ Missing Skills</h3>
+
+            <div className="skills">
+
+              {missingSkills.length > 0 ? (
+                missingSkills.map((skill, index) => (
+                  <div className="skill-missing" key={index}>
+                    {skill}
+                  </div>
+                ))
+              ) : (
+                <p>No missing skills.</p>
+              )}
+
+            </div>
+
+          </div>
+
+          <div className="section">
+
+            <h3>💡 Suggestions</h3>
+
+            <ul className="suggestions">
+
+              {missingSkills.slice(0, 5).map((skill, index) => (
+                <li key={index}>
+                  Add <strong>{skill}</strong> to your resume if you have experience with it.
+                </li>
+              ))}
+
+            </ul>
+
+          </div>
+
+        </div>
+
+      )}
+      <footer className="footer">
+  Built with ❤️ using React • Flask • Python
+</footer>
+
     </div>
   );
 }
