@@ -106,23 +106,18 @@ http://localhost:3000
 
 ---
 
-## 📸 Screenshots
 
-### 🏠 Home Page
+## Application Screenshots
 
-![Home](images/home.png)
+### Home Page
+![Home Page](home.png)
 
----
+### Analysis Results
+![Analysis Results](result.png)
 
-### 🎯 ATS Match Results
+### AI Suggestions
+![AI Suggestions](suggestions.png)
 
-![ATS Match Results](images/result.png)
-
----
-
-### 📊 Suggestions
-
-![Suggestions](images/suggestions.png)
 
 ## ✨ Future Improvements
 
